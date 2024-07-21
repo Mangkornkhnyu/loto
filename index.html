@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เว็บซื้อหวย</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .number-input {
+            width: 100px;
+        }
+        .lottery-btn img {
+            width: 50px;
+            height: 30px;
+        }
+        .lottery-icon {
+            width: 20px;
+            height: 15px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+        .input-group .btn {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>เว็บซื้อหวย</h1>
+        <div class="mb-3">
+            <label class="form-label">ประเภทหวย</label>
+            <div>
+                <input type="checkbox" class="btn-check" id="ฮานอย" autocomplete="off" value="ฮานอย">
+                <label class="btn btn-outline-primary lottery-btn" for="ฮานอย">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" alt="หวยฮานอย">
+                </label>
+
+                <input type="checkbox" class="btn-check" id="ลาว" autocomplete="off" value="ลาว">
+                <label class="btn btn-outline-primary lottery-btn" for="ลาว">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Flag_of_Laos.svg" alt="หวยลาว">
+                </label>
+            </div>
+        </div>
+
+        <div id="numberTypeContainer" class="mb-3">
+            <label class="form-label">เลือกประเภทตัวเลข</label>
+            <div>
+                <input type="checkbox" class="btn-check" id="3ตัวบน" autocomplete="off" value="3ตัวบน">
+                <label class="btn btn-outline-primary" for="3ตัวบน">3 ตัวบน</label>
+
+                <input type="checkbox" class="btn-check" id="3ตัวล่าง" autocomplete="off" value="3ตัวล่าง">
+                <label class="btn btn-outline-primary" for="3ตัวล่าง">3 ตัวล่าง</label>
+
+                <input type="checkbox" class="btn-check" id="3ตัวโต๊ด" autocomplete="off" value="3ตัวโต๊ด">
+                <label class="btn btn-outline-primary" for="3ตัวโต๊ด">3 ตัวโต๊ด</label>
+                
+                <input type="checkbox" class="btn-check" id="2ตัวบน" autocomplete="off" value="2ตัวบน">
+                <label class="btn btn-outline-primary" for="2ตัวบน">2 ตัวบน</label>
+
+                <div class="input-group">
+                    <input type="checkbox" class="btn-check" id="2ตัวล่าง" autocomplete="off" value="2ตัวล่าง">
+                    <label class="btn btn-outline-primary" for="2ตัวล่าง">2 ตัวล่าง</label>
+                    <button class="btn btn-secondary ms-2" onclick="reverseNumber()">กลับเลข</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="lotteryNumber" class="form-label">กรอกตัวเลข</label>
+            <input type="text" class="form-control number-input" id="lotteryNumber" maxlength="3" oninput="validateInput()">
+        </div>
+
+        <div class="input-group">
+            <button class="btn btn-primary" onclick="addToList()">ตกลง</button>
+        </div>
+
+        <h3 class="mt-5">รายการที่เลือก</h3>
+        <ul id="selectedNumbers" class="list-group"></ul>
+
+        <button class="btn btn-warning mt-3" onclick="showSummary()">สรุปรายการ</button>
+    </div>
+
+    <div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="summaryModalLabel">สรุปรายการ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="summaryContent"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        const selectedNumbers = new Set();
+
+        function validateInput() {
+            const lotteryNumber = document.getElementById('lotteryNumber');
+            lotteryNumber.value = lotteryNumber.value.replace(/\D/g, '');
+        }
+
+        function reverseNumber() {
+            const lotteryNumber = document.getElementById('lotteryNumber');
+            lotteryNumber.value = lotteryNumber.value.split('').reverse().join('');
+        }
+
+        function addToList() {
+            const selectedLotteryTypes = Array.from(document.querySelectorAll('input.btn-check:checked'))
+                .map(el => el.value);
+            const selectedNumberTypes = Array.from(document.querySelectorAll('input.btn-check[id="3ตัวบน"]:checked, input.btn-check[id="3ตัวล่าง"]:checked, input.btn-check[id="3ตัวโต๊ด"]:checked, input.btn-check[id="2ตัวบน"]:checked, input.btn-check[id="2ตัวล่าง"]:checked'))
+                .map(el => el.value);
+            const lotteryNumber = document.getElementById('lotteryNumber').value;
+
+            const lotteryType = selectedLotteryTypes.join(', ');
+            const numberTypeValue = selectedNumberTypes.join(', ');
+
+            if (lotteryNumber && numberTypeValue) {
+                const entry = `${lotteryType} - ${numberTypeValue}: ${lotteryNumber}`;
+                if (!selectedNumbers.has(entry)) {
+                    selectedNumbers.add(entry);
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = entry;
+                    document.getElementById('selectedNumbers').appendChild(li);
+                }
+                // Automatically reverse number on adding to list
+                reverseNumber();
+            }
+        }
+
+        function showSummary() {
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.innerHTML = '';
+            selectedNumbers.forEach(number => {
+                const p = document.createElement('p');
+                p.textContent = number;
+                summaryContent.appendChild(p);
+            });
+
+            const summaryModal = new bootstrap.Modal(document.getElementById('summaryModal'));
+            summaryModal.show();
+        }
+    </script>
+</body>
+</html>
